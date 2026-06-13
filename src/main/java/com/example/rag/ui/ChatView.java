@@ -80,7 +80,7 @@ public class ChatView extends HorizontalLayout {
         sidebar.addClassName("claude-sidebar");
 
         // Header Title
-        H3 title = new H3("Claude PDF Workspace");
+        H3 title = new H3("RAG Assist");
         Span subtitle = new Span("Retrieval-Augmented Generation (RAG)");
         subtitle.addClassName("subtitle");
         sidebar.add(title, subtitle);
