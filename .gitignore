@@ -1,32 +1,40 @@
+node_modules
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Ignore build directory
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 build/
-# Ignore build like directory
-build*/
-# Ignore all files in the build directory
-build/*
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# Ignore tests build directory
-tests/build/
-tests/build*/
-
-# Test binaries
-tests/**/ndd_filter_test
-
-# macOS debug symbols
-*.dSYM/
-
-# Sometimes data files are created for tetsing
-data/
-data/*
-
-# VS Code directory
+### VS Code ###
 .vscode/
-.vscode/*
 
-# Frontend
-frontend/
-frontend/*
-
-# DS Store
+# Custom ignores
+.env
+vector_store.json
+uploaded_files.txt
 .DS_Store

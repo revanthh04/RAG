@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# Cancel in-progress runs of the same workflow on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            simd_flag: "-DUSE_AVX2=ON"
+            arch_label: "avx2"
+          - os: macos-14
+            simd_flag: "-DUSE_NEON=ON"
+            arch_label: "neon-darwin"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake \
+            clang \
+            build-essential \
+            libssl-dev \
+            libcurl4-openssl-dev \
+            git
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install cmake openssl curl
+
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. \
+            ${{ matrix.simd_flag }} \
+            -DENABLE_TESTING=ON \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cd build
+          cmake --build . -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
+
+      - name: Run Tests
+        run: |
+          cd build
+          ctest --output-on-failure --timeout 120
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.arch_label }}
+          path: build/Testing/
+          retention-days: 7
+
+  lint:
+    name: Clang Format Check
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+
+      - name: Check formatting
+        run: |
+          find src/ tests/ -name '*.cpp' -o -name '*.hpp' -o -name '*.h' | \
+            xargs clang-format --dry-run --Werror --style=file 2>&1 || \
+            echo "::warning::Some files do not match the .clang-format style"
