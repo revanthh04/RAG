@@ -7,31 +7,31 @@ sdk: docker
 pinned: false
 ---
 
-# RAG Assist: 100% Java-Based PDF Chatbot
+# RAG Assist: PDF Chatbot
 
-RAG Assist is a professional, high-performance Retrieval-Augmented Generation (RAG) web application built entirely on a modern Java stack. It allows users to upload PDF documents, index their content into a local vector database, and chat with an LLM (using Groq API) regarding the documents' content.
+RAG Assist is a Retrieval-Augmented Generation (RAG) web application that enables users to upload PDF documents, index their content into a local vector database, and chat with an LLM via the Groq API to query document content.
 
 ---
 
 ## 🌟 Key Features
 
-*   **100% Java Stack**: No Python runtime dependencies. All text extraction, chunking, embedding generation, and LLM orchestration happen directly inside the Java Virtual Machine.
-*   **Local Embedding Processing**: Generates embeddings using a JVM-native `all-MiniLM-L6-v2` ONNX model. Computation is completely offline and ultra-fast.
-*   **Zero-Dependency Vector Store**: Persists vector representations locally on disk using LangChain4j's `InMemoryEmbeddingStore` (`vector_store.json`), avoiding complex external database configurations.
-*   **Interactive PDF Summarizer**: Generates concise, bulleted summaries of uploaded documents with a single click.
-*   **Claude Warm Letterpress Aesthetic**: A bespoke custom theme incorporating a warm ivory palette, hairline linen borders, and humanist Inter and Source Serif typography.
-*   **Zero-Config Security**: A sidebar-accessible API key configuration panel lets users run their queries securely via the Groq LLM API.
+*   **Document Conversational Search**: Chat naturally with your uploaded PDF documents using context-aware Retrieval-Augmented Generation (RAG).
+*   **Local Embedding Generation**: Computes text embeddings locally using a quantized `all-MiniLM-L6-v2` model, ensuring fast and offline embedding calculations.
+*   **Zero-Configuration Database**: Stores vector representations locally on disk (`vector_store.json`) using an in-memory document store.
+*   **Interactive PDF Summarizer**: Summarize uploaded document content into concise, bulleted key takeaways with a single click.
+*   **Polished User Interface**: Built with reactive web components featuring a warm ivory design, clear document lists, and dynamic chat layouts.
+*   **On-the-Fly API Configuration**: Update your Groq API credentials securely directly from the sidebar.
 
 ---
 
 ## 🛠️ Tech Stack
 
-*   **Core Framework**: Spring Boot 3.5.0
-*   **Frontend UI**: Vaadin Flow 24.x (Reactive web components)
-*   **RAG Engine**: LangChain4j 0.35.0
-*   **Local Embeddings**: ONNX runtime via quantized MiniLM-L6-v2
+*   **Backend Framework**: Spring Boot 3.5.0
+*   **Frontend UI**: Vaadin Flow 24.x
+*   **AI & RAG Orchestration**: LangChain4j 0.35.0
+*   **Embeddings Model**: Quantized MiniLM-L6-v2
 *   **PDF Parser**: Apache PDFBox 3.0.2
-*   **Deployment Hosting**: Docker, Hugging Face Spaces
+*   **Deployment**: Docker, Hugging Face Spaces
 
 ---
 
@@ -101,7 +101,7 @@ flowchart TD
     ```
     The application will automatically initialize and start listening on [http://localhost:8080](http://localhost:8080).
 
-4.  **Production Production Compilation (Vaadin Bundle)**:
+4.  **Production Compilation (Vaadin Bundle)**:
     To build the production JAR with optimized Vaadin web components compiled:
     ```bash
     ./mvnw clean package -Pproduction
