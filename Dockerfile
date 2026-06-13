@@ -5,8 +5,8 @@ COPY pom.xml .
 # Pre-download dependencies to cache this step
 RUN mvn dependency:go-offline -B
 COPY src ./src
-# Build package skipping tests for speed
-RUN mvn clean package -DskipTests
+# Build package with production profile and skip tests
+RUN mvn clean package -Pproduction -DskipTests
 
 # Stage 2: Run the application
 FROM eclipse-temurin:21-jre-jammy
