@@ -1,9 +1,7 @@
 services:
   - type: web
     name: pdf-chat-java
-    runtime: java
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/rag-0.0.1-SNAPSHOT.jar
+    runtime: docker
     envVars:
       - key: GROQ_API_KEY
         sync: false
