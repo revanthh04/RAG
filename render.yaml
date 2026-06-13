@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: pdf-chat-java
-    runtime: docker
-    envVars:
-      - key: GROQ_API_KEY
-        sync: false
-      - key: PORT
-        value: 8080
