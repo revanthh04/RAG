@@ -17,11 +17,18 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,6 +69,14 @@ public class RagService {
 
         // Initialize persistent local embedding store
         loadEmbeddingStore();
+
+        // Discover and align available models if API key is present
+        if (isApiKeyConfigured()) {
+            List<String> discovered = fetchAvailableModels(groqApiKey);
+            if (!discovered.isEmpty() && !discovered.contains(groqModel)) {
+                groqModel = discovered.get(0);
+            }
+        }
 
         // Initialize Chat LLM
         initializeChatModel();
@@ -126,11 +141,56 @@ public class RagService {
     }
 
     /**
-     * Re-initializes the chat model when a new API key is provided at runtime.
+     * Re-initializes the chat model when a new API key is provided at runtime,
+     * discovering the models actually accessible with this key.
      */
-    public void updateApiKey(String newApiKey) {
+    public List<String> updateApiKey(String newApiKey) {
         this.groqApiKey = newApiKey;
+        List<String> available = fetchAvailableModels(newApiKey);
+        if (!available.isEmpty()) {
+            if (!available.contains(this.groqModel)) {
+                this.groqModel = available.get(0);
+            }
+        }
         initializeChatModel();
+        return available;
+    }
+
+    /**
+     * Queries Groq API to fetch all active chat models available to this API key.
+     */
+    public List<String> fetchAvailableModels(String apiKey) {
+        if (apiKey == null || apiKey.trim().isEmpty() || "your_groq_api_key_here".equals(apiKey)) {
+            return Collections.emptyList();
+        }
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.groq.com/openai/v1/models"))
+                    .header("Authorization", "Bearer " + apiKey.trim())
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<String> models = new ArrayList<>();
+                Pattern pattern = Pattern.compile("\"id\":\\s*\"([^\"]+)\"");
+                Matcher matcher = pattern.matcher(response.body());
+                while (matcher.find()) {
+                    String id = matcher.group(1);
+                    if (!id.contains("whisper") && !id.contains("guard") && !id.contains("embedding")) {
+                        models.add(id);
+                    }
+                }
+                if (!models.isEmpty()) {
+                    return models;
+                }
+            } else {
+                System.err.println("Groq models endpoint responded with code: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("Could not fetch models from Groq: " + e.getMessage());
+        }
+        return Collections.emptyList();
     }
 
     /**

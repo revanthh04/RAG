@@ -2,6 +2,7 @@ package com.example.rag.ui;
 
 import com.example.rag.service.PdfService;
 import com.example.rag.service.RagService;
+import com.example.rag.util.MarkdownUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -98,7 +99,11 @@ public class ChatView extends HorizontalLayout {
         apiKeyField.addValueChangeListener(event -> {
             String val = event.getValue();
             if (val != null && !val.trim().isEmpty() && !val.contains("•")) {
-                ragService.updateApiKey(val.trim());
+                List<String> models = ragService.updateApiKey(val.trim());
+                if (models != null && !models.isEmpty()) {
+                    modelSelect.setItems(models);
+                    modelSelect.setValue(ragService.getGroqModel());
+                }
                 showNotification("API Key updated!", NotificationVariant.LUMO_SUCCESS);
             }
         });
@@ -305,10 +310,9 @@ public class ChatView extends HorizontalLayout {
 
     private void addBotMessage(String message) {
         Div bubble = new Div();
-        // Handle markdown/newlines nicely in chat bubbles
         Div content = new Div();
-        content.getStyle().set("white-space", "pre-wrap");
-        content.setText(message);
+        content.addClassName("markdown-content");
+        content.getElement().setProperty("innerHTML", MarkdownUtils.toHtml(message));
         bubble.add(content);
         bubble.addClassName("chat-bubble-bot");
 

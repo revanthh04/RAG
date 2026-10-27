@@ -122,6 +122,49 @@ body {
   line-height: 1.63 !important;
 }
 
+.chat-bubble-bot .markdown-content p {
+  margin: 0 0 8px 0;
+}
+.chat-bubble-bot .markdown-content p:last-child {
+  margin-bottom: 0;
+}
+.chat-bubble-bot .markdown-content strong {
+  font-weight: 600;
+  color: var(--color-ink-black);
+}
+.chat-bubble-bot .markdown-content em {
+  font-style: italic;
+}
+.chat-bubble-bot .markdown-content ul,
+.chat-bubble-bot .markdown-content ol {
+  margin: 6px 0 10px 20px;
+  padding: 0;
+}
+.chat-bubble-bot .markdown-content li {
+  margin-bottom: 4px;
+}
+.chat-bubble-bot .markdown-content h1,
+.chat-bubble-bot .markdown-content h2,
+.chat-bubble-bot .markdown-content h3,
+.chat-bubble-bot .markdown-content h4 {
+  font-family: var(--font-anthropic-serif) !important;
+  color: var(--color-ink-black) !important;
+  margin: 12px 0 6px 0;
+}
+.chat-bubble-bot .markdown-content code {
+  background-color: var(--color-warm-parchment);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.chat-bubble-bot .markdown-content pre {
+  background-color: var(--color-warm-parchment);
+  padding: 10px 14px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
 /* Vaadin UI Form overrides to align with Claude design system */
 vaadin-text-field, vaadin-password-field, vaadin-combo-box {
   font-family: var(--font-anthropic-sans) !important;
