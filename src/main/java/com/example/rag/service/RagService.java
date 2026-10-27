@@ -35,7 +35,7 @@ public class RagService {
     private EmbeddingModel embeddingModel;
     private ChatLanguageModel chatModel;
     private String groqApiKey;
-    private String groqModel = "llama-3.3-70b-versatile";
+    private String groqModel = "openai/gpt-oss-20b";
     private List<String> uploadedFilesList = new ArrayList<>();
 
     @PostConstruct
@@ -47,7 +47,7 @@ public class RagService {
             groqApiKey = System.getenv("GROQ_API_KEY");
         }
 
-        // Load Model from .env or System env, defaulting to llama-3.3-70b-versatile
+        // Load Model from .env or System env, defaulting to openai/gpt-oss-20b
         String envModel = dotenv.get("GROQ_MODEL");
         if (envModel == null || envModel.trim().isEmpty()) {
             envModel = System.getenv("GROQ_MODEL");
@@ -229,7 +229,7 @@ public class RagService {
         } catch (Exception e) {
             String msg = e.getMessage();
             if (msg != null && msg.contains("model_not_found")) {
-                return "Error calling Groq API: The model '" + groqModel + "' is not accessible or does not exist for your account. Please switch to another model (such as 'llama-3.3-70b-versatile') using the Model selector in the sidebar.\n\nDetails: " + msg;
+                return "Error calling Groq API: The model '" + groqModel + "' is not accessible or does not exist for your account. Please switch to another model (such as 'openai/gpt-oss-20b') using the Model selector in the sidebar.\n\nDetails: " + msg;
             }
             return "Error calling Groq API: " + msg;
         }
