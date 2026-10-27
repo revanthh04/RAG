@@ -5,6 +5,7 @@ import com.example.rag.service.RagService;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H4;
@@ -43,6 +44,7 @@ public class ChatView extends HorizontalLayout {
     private Button sendButton;
     private VerticalLayout fileListContainer;
     private PasswordField apiKeyField;
+    private ComboBox<String> modelSelect;
     private Button clearDbButton;
 
     // Cache uploaded files text content for fast summarization in session
@@ -101,6 +103,36 @@ public class ChatView extends HorizontalLayout {
             }
         });
         sidebar.add(apiKeyField);
+
+        // Groq Model Selection
+        modelSelect = new ComboBox<>("LLM Model");
+        modelSelect.setWidthFull();
+        modelSelect.setItems(
+                "llama-3.3-70b-versatile",
+                "openai/gpt-oss-20b",
+                "openai/gpt-oss-120b",
+                "qwen/qwen3.8-27b",
+                "llama-3.1-8b-instant"
+        );
+        modelSelect.setValue(ragService.getGroqModel());
+        modelSelect.setAllowCustomValue(true);
+        modelSelect.setHelperText("Select or enter Groq model ID");
+        modelSelect.addValueChangeListener(event -> {
+            String selected = event.getValue();
+            if (selected != null && !selected.trim().isEmpty()) {
+                ragService.updateModel(selected.trim());
+                showNotification("Model set to " + selected.trim(), NotificationVariant.LUMO_SUCCESS);
+            }
+        });
+        modelSelect.addCustomValueSetListener(event -> {
+            String custom = event.getDetail();
+            if (custom != null && !custom.trim().isEmpty()) {
+                modelSelect.setValue(custom.trim());
+                ragService.updateModel(custom.trim());
+                showNotification("Model set to " + custom.trim(), NotificationVariant.LUMO_SUCCESS);
+            }
+        });
+        sidebar.add(modelSelect);
 
         // PDF Upload component
         H4 uploadTitle = new H4("Upload PDFs");

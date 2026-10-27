@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-10-27
+
+### Fixed
+- Fixed Groq API error `model_not_found` caused by deprecated `llama-3.1-8b-instant`.
+- Updated default Groq model to `llama-3.3-70b-versatile` across the application.
+
+### Added
+- Added dynamic LLM Model selector in the UI sidebar with support for popular Groq models (`llama-3.3-70b-versatile`, `openai/gpt-oss-20b`, `openai/gpt-oss-120b`, `qwen/qwen3.8-27b`) and custom model IDs.
+- Added `GROQ_MODEL` support in `.env` and environment variables.
+- Added user-friendly error diagnostics in case a chosen model is not supported or accessible on the user's Groq tier.
+
 ## [1.1.0] - 2026-06-13
 
 ### Changed

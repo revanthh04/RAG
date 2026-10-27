@@ -70,7 +70,8 @@ body {
   letter-spacing: 0.02em !important;
 }
 
-.claude-sidebar vaadin-password-field {
+.claude-sidebar vaadin-password-field,
+.claude-sidebar vaadin-combo-box {
   --vaadin-input-field-border-radius: var(--radius-inputs) !important;
 }
 
@@ -122,7 +123,7 @@ body {
 }
 
 /* Vaadin UI Form overrides to align with Claude design system */
-vaadin-text-field, vaadin-password-field {
+vaadin-text-field, vaadin-password-field, vaadin-combo-box {
   font-family: var(--font-anthropic-sans) !important;
 }
 

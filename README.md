@@ -19,6 +19,7 @@ RAG Assist is a Retrieval-Augmented Generation (RAG) web application that enable
 *   **Local Embedding Generation**: Computes text embeddings locally using a quantized `all-MiniLM-L6-v2` model, ensuring fast and offline embedding calculations.
 *   **Zero-Configuration Database**: Stores vector representations locally on disk (`vector_store.json`) using an in-memory document store.
 *   **Interactive PDF Summarizer**: Summarize uploaded document content into concise, bulleted key takeaways with a single click.
+*   **Dynamic LLM Selection**: Seamlessly switch between Groq models (default: `llama-3.3-70b-versatile`, `openai/gpt-oss-20b`, or custom models) on the fly.
 *   **Polished User Interface**: Built with reactive web components featuring a warm ivory design, clear document lists, and dynamic chat layouts.
 *   **On-the-Fly API Configuration**: Update your Groq API credentials securely directly from the sidebar.
 
@@ -93,6 +94,7 @@ flowchart TD
     Create a `.env` file in the root folder of the project:
     ```env
     GROQ_API_KEY=your_groq_api_key_here
+    GROQ_MODEL=llama-3.3-70b-versatile
     ```
 
 3.  **Run the Application**:

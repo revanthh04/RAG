@@ -35,6 +35,7 @@ public class RagService {
     private EmbeddingModel embeddingModel;
     private ChatLanguageModel chatModel;
     private String groqApiKey;
+    private String groqModel = "llama-3.3-70b-versatile";
     private List<String> uploadedFilesList = new ArrayList<>();
 
     @PostConstruct
@@ -44,6 +45,15 @@ public class RagService {
         groqApiKey = dotenv.get("GROQ_API_KEY");
         if (groqApiKey == null || groqApiKey.trim().isEmpty() || "your_groq_api_key_here".equals(groqApiKey)) {
             groqApiKey = System.getenv("GROQ_API_KEY");
+        }
+
+        // Load Model from .env or System env, defaulting to llama-3.3-70b-versatile
+        String envModel = dotenv.get("GROQ_MODEL");
+        if (envModel == null || envModel.trim().isEmpty()) {
+            envModel = System.getenv("GROQ_MODEL");
+        }
+        if (envModel != null && !envModel.trim().isEmpty()) {
+            groqModel = envModel.trim();
         }
 
         // Initialize Local Embedding Model (all-MiniLM-L6-v2)
@@ -70,7 +80,7 @@ public class RagService {
             chatModel = OpenAiChatModel.builder()
                     .baseUrl("https://api.groq.com/openai/v1")
                     .apiKey(groqApiKey)
-                    .modelName("llama-3.1-8b-instant")
+                    .modelName(groqModel)
                     .temperature(0.0)
                     .build();
         }
@@ -121,6 +131,20 @@ public class RagService {
     public void updateApiKey(String newApiKey) {
         this.groqApiKey = newApiKey;
         initializeChatModel();
+    }
+
+    /**
+     * Re-initializes the chat model when a new model is selected at runtime.
+     */
+    public void updateModel(String newModel) {
+        if (newModel != null && !newModel.trim().isEmpty()) {
+            this.groqModel = newModel.trim();
+            initializeChatModel();
+        }
+    }
+
+    public String getGroqModel() {
+        return groqModel;
     }
 
     /**
@@ -203,7 +227,11 @@ public class RagService {
             );
             return response.content().text();
         } catch (Exception e) {
-            return "Error calling Groq API: " + e.getMessage();
+            String msg = e.getMessage();
+            if (msg != null && msg.contains("model_not_found")) {
+                return "Error calling Groq API: The model '" + groqModel + "' is not accessible or does not exist for your account. Please switch to another model (such as 'llama-3.3-70b-versatile') using the Model selector in the sidebar.\n\nDetails: " + msg;
+            }
+            return "Error calling Groq API: " + msg;
         }
     }
 
@@ -234,7 +262,11 @@ public class RagService {
             );
             return response.content().text();
         } catch (Exception e) {
-            return "Error generating summary: " + e.getMessage();
+            String msg = e.getMessage();
+            if (msg != null && msg.contains("model_not_found")) {
+                return "Error generating summary: The model '" + groqModel + "' is not accessible or does not exist for your account. Please switch to another model in the sidebar.\n\nDetails: " + msg;
+            }
+            return "Error generating summary: " + msg;
         }
     }
 
